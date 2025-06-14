@@ -1,4 +1,4 @@
-// ======================= COMPLETE AND CORRECTED SCRIPT.JS =======================
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -9,11 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('section');
     const header = document.querySelector('.header');
 
-    menuIcon.onclick = () => {
-        menuIcon.classList.toggle('fa-xmark');
-        navbar.classList.toggle('active');
-    };
-    
+    if (menuIcon && navbar) {
+        menuIcon.onclick = () => {
+            menuIcon.classList.toggle('fa-xmark');
+            navbar.classList.toggle('active');
+        };
+    }
+
     window.onscroll = () => {
         sections.forEach(sec => {
             let top = window.scrollY;
@@ -29,57 +31,59 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        header.classList.toggle('sticky', window.scrollY > 100);
+        if (header) {
+            header.classList.toggle('sticky', window.scrollY > 100);
+        }
 
-        menuIcon.classList.remove('fa-xmark');
-        navbar.classList.remove('active');
+        if (menuIcon && navbar) {
+            menuIcon.classList.remove('fa-xmark');
+            navbar.classList.remove('active');
+        }
     };
-    
+
     // --- THEME, ANIMATION, & INTERACTIVITY LOGIC ---
 
-    // 1. Initialize Animate On Scroll (AOS)
+    // 1. AOS (Animate On Scroll) Initialization
     AOS.init({
-        duration: 800,      // Animation duration in milliseconds
-        offset: 120,        // Trigger animation a little sooner
-        delay: 100,         // Add a small delay to all animations
-        easing: 'ease-in-out', // A smoother animation timing
-        once: false,        // <-- THIS IS THE MOST IMPORTANT CHANGE
-        mirror: true        // This ensures animations play on scroll up/down
+        duration: 800,
+        offset: 120,
+        delay: 100,
+        easing: 'ease-in-out',
+        once: false,
+        mirror: true
     });
 
     // 2. Typed.js for the home section
-    new Typed('.multiple-text', {
-        strings: ['Software Engineer','FullStack developer',  'UI/UX Enthusiast', 'Problem Solver'],
-        typeSpeed: 70,
-        backSpeed: 70,
-        backDelay: 1000,
-        loop: true
-    });
+    if (document.querySelector('.multiple-text')) {
+        new Typed('.multiple-text', {
+            strings: ['Software Engineer', 'FullStack developer', 'UI/UX Enthusiast', 'Problem Solver'],
+            typeSpeed: 70,
+            backSpeed: 70,
+            backDelay: 1000,
+            loop: true
+        });
+    }
 
     // 3. Animated Slogan Logic
     const slogans = ["Code with purpose.", "Building tomorrow's web.", "Elegance in every line.", "Logic is my art."];
     let sloganIndex = 0;
     const sloganElement = document.querySelector('.slogan');
-    
-    function changeSlogan() {
-        if (sloganElement) { // Check if the element exists before using it
+
+    if (sloganElement) {
+        function changeSlogan() {
             sloganElement.textContent = slogans[sloganIndex];
             sloganIndex = (sloganIndex + 1) % slogans.length;
         }
+        setInterval(changeSlogan, 5000);
+        changeSlogan();
     }
-    if (sloganElement) {
-        setInterval(changeSlogan, 5000); // Change slogan every 5 seconds
-        changeSlogan(); // Initial call
-    }
-    
+
     // 4. Dark/Light Mode Toggle
     const themeToggle = document.querySelector('#theme-toggle');
-
     if (themeToggle) {
         const themeIcon = themeToggle.querySelector('i');
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
-            
             if (document.body.classList.contains('light-mode')) {
                 themeIcon.classList.replace('fa-moon', 'fa-sun');
                 localStorage.setItem('theme', 'light');
@@ -109,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
         colorOptions.forEach(option => {
             option.addEventListener('click', () => {
                 const root = document.documentElement;
-                
                 if (option.hasAttribute('data-gradient')) {
                     const newGradient = option.getAttribute('data-gradient');
                     root.style.setProperty('--main-background', newGradient);
@@ -152,41 +155,33 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPreferences();
 
 
-   // ======================= UPDATED GAME HUB LOGIC =======================
-// In script.js, find and replace the game hub logic with this block
+    // --- GAME HUB LOGIC ---
+    const playGameBtn = document.getElementById('play-game-btn');
+    const gameHubIntro = document.querySelector('.game-hub-intro');
+    const gameShowcase = document.querySelector('.game-showcase');
+    const backToHubBtn = document.getElementById('back-to-hub-btn');
 
-const playGameBtn = document.getElementById('play-game-btn');
-const gameHubIntro = document.querySelector('.game-hub-intro');
-const gameShowcase = document.querySelector('.game-showcase');
-const backToHubBtn = document.getElementById('back-to-hub-btn'); // Get the new back button
+    if (playGameBtn && gameHubIntro && gameShowcase && backToHubBtn) {
+        function showIntroScreen() {
+            gameShowcase.style.display = 'none';
+            gameHubIntro.style.display = 'flex';
+            setTimeout(() => {
+                gameHubIntro.classList.remove('hidden');
+            }, 10);
+        }
 
-if (playGameBtn && gameHubIntro && gameShowcase && backToHubBtn) {
-    // Function to show the intro screen
-    function showIntroScreen() {
-        gameShowcase.style.display = 'none'; // Immediately hide games
-        
-        gameHubIntro.style.display = 'flex'; // Make intro visible again
-        // Use a timeout to apply the class after display is set, allowing for transition
-        setTimeout(() => {
-            gameHubIntro.classList.remove('hidden'); 
-        }, 10); // A tiny delay is enough
+        function showGameShowcase() {
+            gameHubIntro.classList.add('hidden');
+            setTimeout(() => {
+                gameHubIntro.style.display = 'none';
+                gameShowcase.style.display = 'flex';
+            }, 500);
+        }
+        playGameBtn.addEventListener('click', showGameShowcase);
+        backToHubBtn.addEventListener('click', showIntroScreen);
     }
 
-    // Function to show the game showcase
-    function showGameShowcase() {
-        gameHubIntro.classList.add('hidden');
-        setTimeout(() => {
-            gameHubIntro.style.display = 'none';
-            gameShowcase.style.display = 'flex';
-        }, 500); // Delay matches CSS transition
-    }
-
-    // Event Listeners
-    playGameBtn.addEventListener('click', showGameShowcase);
-    backToHubBtn.addEventListener('click', showIntroScreen);
-}
-
-    // --- Bug Squasher Game Logic (Modular) ---
+    // --- Bug Squasher Game Logic ---
     const bugSquasherGrid = document.querySelector('.bug-squasher-grid');
     const scoreDisplay = document.querySelector('.score-display span');
     const startGameBtn = document.querySelector('.start-game-btn[data-game="bug-squasher"]');
@@ -205,7 +200,7 @@ if (playGameBtn && gameHubIntro && gameShowcase && backToHubBtn) {
             bugSquasherGrid.appendChild(cell);
         }
 
-        const cells = bugSquasherGrid.querySelectorAll('.game-cell');
+        const cells = bugSquasherGrid.querySelectorAll('.cell');
 
         function randomBug() {
             cells.forEach(cell => cell.classList.remove('bug'));
@@ -228,14 +223,11 @@ if (playGameBtn && gameHubIntro && gameShowcase && backToHubBtn) {
         function startGame() {
             clearInterval(bugTimer);
             clearTimeout(gameInterval);
-
             score = 0;
             scoreDisplay.textContent = score;
             startGameBtn.disabled = true;
             startGameBtn.textContent = 'Playing...';
-            
             bugTimer = setInterval(randomBug, 800);
-            
             gameInterval = setTimeout(() => {
                 clearInterval(bugTimer);
                 alert(`Game Over! Your final score is ${score}`);
@@ -247,10 +239,10 @@ if (playGameBtn && gameHubIntro && gameShowcase && backToHubBtn) {
         startGameBtn.addEventListener('click', startGame);
     }
     
-}); // --- THIS IS THE SINGLE, CLOSING BRACKET FOR DOMCONTENTLOADED ---
+}); // --- END OF DOMCONTENTLOADED ---
 
 
-// --- CONTACT FORM SUBMISSION LOGIC (STAYS OUTSIDE) ---
+// --- CONTACT FORM SUBMISSION LOGIC ---
 const contactForm = document.getElementById('contact-form');
 const successMessage = document.getElementById('success-message');
 
@@ -283,7 +275,6 @@ if (contactForm) {
                 setTimeout(() => {
                     successMessage.style.transition = 'opacity 0.5s ease-out';
                     successMessage.style.opacity = '0';
-
                     setTimeout(() => {
                         successMessage.style.display = 'none';
                         contactForm.style.display = 'block';
@@ -293,7 +284,6 @@ if (contactForm) {
                         }, 10);
                     }, 500);
                 }, 5000);
-
             } else {
                 response.json().then(data => {
                     if (Object.hasOwn(data, 'errors')) {
